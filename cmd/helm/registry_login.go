@@ -27,8 +27,8 @@ import (
 	"github.com/moby/term"
 	"github.com/spf13/cobra"
 
-	"helm.sh/helm/v3/cmd/helm/require"
-	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v4/cmd/helm/require"
+	"helm.sh/helm/v4/pkg/action"
 )
 
 const registryLoginDesc = `
@@ -53,8 +53,8 @@ func newRegistryLoginCmd(cfg *action.Configuration, out io.Writer) *cobra.Comman
 		Short:             "login to a registry",
 		Long:              registryLoginDesc,
 		Args:              require.MinimumNArgs(1),
-		ValidArgsFunction: noCompletions,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		ValidArgsFunction: cobra.NoFileCompletions,
+		RunE: func(_ *cobra.Command, args []string) error {
 			hostname := args[0]
 
 			username, password, err := getUsernamePassword(o.username, o.password, o.passwordFromStdinOpt)

@@ -31,9 +31,9 @@ import (
 	"golang.org/x/term"
 	"sigs.k8s.io/yaml"
 
-	"helm.sh/helm/v3/cmd/helm/require"
-	"helm.sh/helm/v3/pkg/getter"
-	"helm.sh/helm/v3/pkg/repo"
+	"helm.sh/helm/v4/cmd/helm/require"
+	"helm.sh/helm/v4/pkg/getter"
+	"helm.sh/helm/v4/pkg/repo"
 )
 
 // Repositories that have been permanently deleted and no longer work
@@ -68,11 +68,16 @@ func newRepoAddCmd(out io.Writer) *cobra.Command {
 	o := &repoAddOptions{}
 
 	cmd := &cobra.Command{
-		Use:               "add [NAME] [URL]",
-		Short:             "add a chart repository",
-		Args:              require.ExactArgs(2),
-		ValidArgsFunction: noCompletions,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		Use:   "add [NAME] [URL]",
+		Short: "add a chart repository",
+		Args:  require.ExactArgs(2),
+		ValidArgsFunction: func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
+			if len(args) > 1 {
+				return noMoreArgsComp()
+			}
+			return nil, cobra.ShellCompDirectiveNoFileComp
+		},
+		RunE: func(_ *cobra.Command, args []string) error {
 			o.name = args[0]
 			o.url = args[1]
 			o.repoFile = settings.RepositoryConfig
